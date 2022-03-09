@@ -4,6 +4,7 @@
 # for use with a solving algorithm such as cubebot2.0
 # supports calibrating colors for increased accuracy
 
+import subprocess
 from calendar import c
 import math
 from statistics import mean
@@ -18,7 +19,13 @@ centers = [
 ]
 
 scan_to_cornerstring = [
-    []
+    [0, 0], [2, 0], [5, 2], [0, 2], [4, 2], [5, 0], [0, 8], [4, 0], [3, 2], [0, 6], [2, 2], [3, 0], # top pieces
+    [1, 0], [2, 8], [3, 6], [1, 2], [4, 6], [3, 8], [1, 8], [4, 8], [5, 6], [1, 6], [2, 6], [5, 8]  # bottom pieces
+]
+scan_to_edgestring = [
+    [0, 1], [5, 1], [0, 5], [4, 1], [0, 7], [3, 1], [0, 3], [2, 1], # top pieces
+    [5, 5], [2, 3], [3, 3], [2, 5], [3, 5], [4, 3], [5, 3], [4, 5],  # middle pieces
+    [1, 1], [3, 7], [1, 5], [4, 7], [1, 7], [5, 7], [1, 3], [2, 7]  # bottom pieces
 ]
 
 # stores calibrated colors
@@ -50,7 +57,7 @@ faces = []
 windowsize = 5
 smoothing = 8
 
-vid = cv2.VideoCapture(1)
+vid = cv2.VideoCapture(0)
 
 def main():
     cald = False
@@ -91,10 +98,22 @@ def main():
             if pressedKey == ord('e'):
                 faces.append([w[0] for w in det_colors])
                 scanned_faces = scanned_faces + 1
+
+                for center_num in range (0, len(centers)):
+                    cv2.circle(img, centers[center_num], 15, (255,0,255), -1)
+
                 if scanned_faces == 6:
-                    print("full scanned cube: ")
-                    for x in range(0, len(faces)):
-                        print(faces[x])
+                    print("full scanned cube")
+
+                    cornerstate = ""
+                    edgestate = ""
+                    for x in range(0, len(scan_to_cornerstring)):
+                        cornerstate += faces[scan_to_cornerstring[x][0]][scan_to_cornerstring[x][1]]
+                    for x in range(0, len(scan_to_edgestring)):
+                        edgestate += faces[scan_to_edgestring[x][0]][scan_to_edgestring[x][1]]
+                    print("detected cube: ", cornerstate, edgestate)
+                    subprocess.Popen([r'CubeBot2.0.exe', 'solve', cornerstate, edgestate])
+                    return()
             
             renderCube(det_colors, confidence_metric)
 
