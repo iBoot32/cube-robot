@@ -113,7 +113,6 @@ def main():
                         edgestate += faces[scan_to_edgestring[x][0]][scan_to_edgestring[x][1]]
                     print("detected cube: ", cornerstate, edgestate)
                     subprocess.Popen([r'CubeBot2.0.exe', 'solve', cornerstate, edgestate])
-                    return()
             
             renderCube(det_colors, confidence_metric)
 
@@ -179,17 +178,17 @@ def scan(windowsize, img, center):
     return (int(mean(b)), int(mean(g)), int(mean(r)))
 
 def renderCube(colors, confidence):
-    rend = np.zeros((875,875,3), dtype=np.uint8)
+    rend = np.zeros((500,500,3), dtype=np.uint8)
     ind = 0
 
     for y in range(0,3):
         for x in range(0,3):
             col = color_to_rgb[colors[ind]]
 
-            cv2.rectangle(rend,(175+175*x, 175+175*y),(350+175*x,350+175*y), col, -1)
+            cv2.rectangle(rend,(0+175*x, 0+175*y),(175+175*x,175+175*y), col, -1)
 
-            cv2.putText(rend, f'[{confidence[ind]}%]', (205+175*x,275+175*y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, cv2.LINE_AA)
-            cv2.putText(rend, f'[{confidence[ind]}%]', (205+175*x,275+175*y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 150, 0), 2, cv2.LINE_AA)
+            cv2.putText(rend, f'[{confidence[ind]}%]', (0+175*x,75+175*y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, cv2.LINE_AA)
+            cv2.putText(rend, f'[{confidence[ind]}%]', (0+175*x,75+175*y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 150, 0), 2, cv2.LINE_AA)
             ind = ind + 1
 
     cv2.imshow("detect", rend)
