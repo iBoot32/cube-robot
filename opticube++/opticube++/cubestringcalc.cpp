@@ -16,7 +16,8 @@ char temp[24] =
 	'W','O','B',
 	'W','R','B'
 };
-char cornerarray[24] =
+
+char start[24] =
 {
 	'Y','R','B',
 	'Y','O','B',
@@ -60,12 +61,12 @@ int calc(char* moves[], int num)
 	for (int i = 1; i < num; i++)
 	{
 		int x = atoi(moves[i]);
-		memcpy(temp, cornerarray, sizeof(cornerarray) / sizeof(char));
+		memcpy(temp, start, sizeof(start) / sizeof(char));
 		for (int z = 0; z < 12; z++)
 		{
-			temp[swaps[x][z][1]] = cornerarray[swaps[x][z][0]];
+			temp[swaps[x][z][1]] = start[swaps[x][z][0]];
 		}
-		memcpy(cornerarray, temp, sizeof(cornerarray) / sizeof(char));
+		memcpy(start, temp, sizeof(start) / sizeof(char));
 	}
 	return(0);
 }

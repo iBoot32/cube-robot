@@ -6,15 +6,15 @@
 #include <chrono>
 using namespace std;
 
-void print_str(const char*, std::string, const int, const int);
+void print_str(char*, std::string, const int, const int);
+void check(std::string str[]);
 
 int main(int argc, char *argv[])
 {
     auto begin = std::chrono::high_resolution_clock::now();
     calc(argv, argc);
 
-
-    int length = 5;
+    int length = 4;
     char str[] = { 'A', 'B', 'C',   'D', 'E', 'F',   'G', 'H', 'I',   'J', 'K', 'L',   'M', 'N', 'O',   'P', 'Q', 'R'};
     int n = sizeof str;
 
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 }
 
 
-void print_str(const char str[], std::string prefix, const int n, const int length)
+void print_str(char str[], std::string prefix, const int n, const int length)
 {
     if (length != 1)
     {
@@ -37,8 +37,12 @@ void print_str(const char str[], std::string prefix, const int n, const int leng
     {
         for (int j = 0; j < n; j++)
         {
-            cout << prefix + str[j] << std::endl;
-
+            check(prefix + str[j]);
         }
     }
+}
+
+void check(std::string str[])
+{
+
 }

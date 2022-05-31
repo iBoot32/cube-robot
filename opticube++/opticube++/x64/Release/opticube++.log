@@ -1,7 +1,4 @@
-﻿  cubestringcalc.cpp
-  Generating code
-  1 of 97 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    4 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  opticube++.vcxproj -> C:\Users\yello\Desktop\projects\opticube++\x64\Release\opticube++.exe
+﻿  main.cpp
+C:\Users\tkocu\Desktop\projects\cube-robot\opticube++\opticube++\main.cpp(40,34): error C2664: 'void check(std::string [])': cannot convert argument 1 from 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' to 'std::string []'
+C:\Users\tkocu\Desktop\projects\cube-robot\opticube++\opticube++\main.cpp(40,26): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Users\tkocu\Desktop\projects\cube-robot\opticube++\opticube++\main.cpp(10,6): message : see declaration of 'check'
