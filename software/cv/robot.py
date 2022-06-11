@@ -17,9 +17,13 @@ port = 12345
 
 # coordinates of centers of circles
 centers = [
-    [150, 75], [300, 75], [450, 75],
-    [150, 225], [300, 225], [450, 225],
-    [150, 375], [300, 375], [450, 375]
+    [300, 95], [395, 135], [295, 185], [200, 135], # face 1 corners
+    [175, 175], [270, 230], [270, 340], [190, 285], # face 2 corners
+    [320, 230], [420, 175], [410, 285], [320, 340], # face 3 corners
+
+    [250, 110], [345, 110], [245, 155], [350, 155], # face 1 edges
+    [220, 200], [180, 230], [270, 290], [220, 310], # face 2 edges
+    [370, 200], [415, 230], [370, 310], [320, 290] # face 3 edges
 ]
 
 scan_to_cornerstring = [
@@ -64,17 +68,16 @@ vid = cv2.VideoCapture(0)
 def main():
     cald = False
     scanned_faces = 0
+
     while(True):
           
         # Capture the video frame
-        # by frame
         ret, img = vid.read()
-        #img = cv2.flip(img,0)
         yes = img.shape
 
         # draw circles for each center
         for center_num in range (0, len(centers)):
-            cv2.circle(img, centers[center_num], 25, (0,0,255), 2)
+            cv2.circle(img, centers[center_num], 2, (0,0,255), 2)
 
         if cald:
             # state that we're calibrated, and also watch out for pressing "e"
@@ -93,11 +96,12 @@ def main():
                 # max euclidean distance is 255*sqrt(3), so calculate accuracy using that
                 #print(f'{detected_color} - confidence=[{round(100-((min_dist)*100)/(255*math.sqrt(3)),2)}%]')
                 confidence_metric.append(round(100-((min_dist)*100)/(255*math.sqrt(3)),2))
+            renderCube(det_colors, img)
 
             pressedKey = cv2.waitKey(1) & 0xFF
             if pressedKey == ord('q'):
                 break
-            if pressedKey == ord('s'):
+            if pressedKey == ord('t'):
                 s.connect(('10.0.0.88', port))
 
                 while True:
@@ -108,9 +112,10 @@ def main():
                         break
 
                     s.send(moves.encode())
+
             if pressedKey == ord('e'):
                 faces.append([w[0] for w in det_colors])
-                scanned_faces = scanned_faces + 1
+                # move scans into separate corner/edge arrays here. then move cube and scan other sides
 
                 for center_num in range (0, len(centers)):
                     cv2.circle(img, centers[center_num], 15, (255,0,255), -1)
@@ -126,8 +131,7 @@ def main():
                         edgestate += faces[scan_to_edgestring[x][0]][scan_to_edgestring[x][1]]
                     print("detected cube: ", cornerstate, edgestate)
                     subprocess.Popen([r'CubeBot2.0.exe', 'solve', cornerstate, edgestate])
-            
-            renderCube(det_colors, confidence_metric)
+        
 
                 
         else:
@@ -138,7 +142,7 @@ def main():
             pressedKey = cv2.waitKey(1) & 0xFF
             if pressedKey == ord('q'):
                 break
-            if pressedKey == ord('s'):
+            if pressedKey == ord('t'):
                 s.connect(('10.0.0.88', port))
 
                 while True:
@@ -201,21 +205,9 @@ def scan(windowsize, img, center):
     cv2.circle(img, center, windowsize, (0,0,255), -1)
     return (int(mean(b)), int(mean(g)), int(mean(r)))
 
-def renderCube(colors, confidence):
-    rend = np.zeros((500,500,3), dtype=np.uint8)
-    ind = 0
-
-    for y in range(0,3):
-        for x in range(0,3):
-            col = color_to_rgb[colors[ind]]
-
-            cv2.rectangle(rend,(0+175*x, 0+175*y),(175+175*x,175+175*y), col, -1)
-
-            cv2.putText(rend, f'[{confidence[ind]}%]', (0+175*x,75+175*y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, cv2.LINE_AA)
-            cv2.putText(rend, f'[{confidence[ind]}%]', (0+175*x,75+175*y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 150, 0), 2, cv2.LINE_AA)
-            ind = ind + 1
-
-    cv2.imshow("detect", rend)
+def renderCube(colors, img):
+    for center_num in range (0, len(centers)):
+        cv2.circle(img, centers[center_num], 5, color_to_rgb[colors[center_num]], -1)
     det_colors.clear()
     confidence_metric.clear()
 
